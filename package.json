@@ -1,0 +1,26 @@
+{
+  "name": "test_pixijs7_1st",
+  "version": "1.0.0",
+  "description": "First test of pixivs ver7.",
+  "main": "webpack.config.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack serve",
+    "watch": "webpack --watch"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "html-webpack-plugin": "^5.6.0",
+    "npm-check-updates": "^16.14.12",
+    "pixi.js": "^7.3.2",
+    "source-map-loader": "^4.0.1",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
