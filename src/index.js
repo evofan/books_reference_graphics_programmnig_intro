@@ -8,6 +8,8 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
+import { Character, Enemy } from "./character.js"
+
 // PIXI.useDeprecated();
 
 const WIDTH = STAGES.WIDTH;
@@ -69,6 +71,25 @@ text2.y = HEIGHT / 2 - 10;
 let image1;
 let image2;
 let loadingEnd = false;
+
+
+// オブジェクト呼び出し
+console.log("キャラクターtest");
+let char = Character;
+console.log(char);
+// (app) => {
+//     a = 1;
+// } 関数
+// {a: 1} オブジェクト
+// クラス？
+console.log(char.a);// 1
+console.log(char.b);// かきくけこ
+
+// クラスインスタンス作成＆呼び出し
+let enem = new Enemy();
+console.log(enem.aa); // 敵名前1
+enem.attack(); // 攻撃した！
+
 
 // Load image and Set sprite
 const LoadImg = async () => {
