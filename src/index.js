@@ -47,26 +47,30 @@ app.stage.addChild(container);
 let temp = `PixiJS Ver:`;
 console.log(temp);
 let text1 = new PIXI.Text(temp, {
-    fontSize: 30,
+    fontSize: 20,
     fill: 0xfefefe,
     lineJoin: "round"
 });
 container.addChild(text1);
 text1.anchor.set(0.5);
-text1.x = WIDTH / 2 - 40;
-text1.y = HEIGHT / 2 - 10;
+// text1.x = WIDTH / 2 - 40;
+// text1.y = HEIGHT / 2 - 10;
+text1.x = WIDTH - 110;
+text1.y = HEIGHT - 10;
 
 let temp2 = `${PIXI.VERSION}`;
 console.log(temp2);
 let text2 = new PIXI.Text(temp2, {
-    fontSize: 40,
+    fontSize: 20,
     fill: 0xff0033,
     lineJoin: "round"
 });
 container.addChild(text2);
 text2.anchor.set(0.5);
-text2.x = WIDTH / 2 + text1.width - 50;
-text2.y = HEIGHT / 2 - 10;
+// text2.x = WIDTH / 2 + text1.width - 50;
+text2.x = WIDTH - 30;
+// text2.y = HEIGHT / 2 - 10;
+text2.y = HEIGHT - 10;
 
 let image1;
 let image2;
@@ -126,9 +130,10 @@ const LoadImg = async () => {
     next(); // next actions
 }
 
+// 画像読み込み
 LoadImg();
 
-// RandomInt test
+// RandomInt test（helper関数）
 let dice = randomInt(1, 6);
 console.log("dice no: ", dice);
 
@@ -139,18 +144,58 @@ const next = () => {
 
 }
 
-// view todays date
-let today = displayDateText(app);
+let startTime = null;
 
+// view todays date
+// let today = displayDateText(app);
+
+let mv = 10;
+
+window.addEventListener("keydown", (event) => {
+
+    // 本だとここで登場（シーン）時はreturn
+
+    switch (event.key) {
+        case "ArrowLeft":
+            image1.x -= mv;
+            break;
+        case "ArrowRight":
+            image1.x += mv;
+            break;
+        case "ArrowUp":
+            image1.y -= mv;
+            break;
+        case "ArrowDown":
+            image1.y += mv;
+            break;
+        default:
+            console.log("ここには来ない");
+            break
+    }
+});
+
+// 本のrenderに相当
+startTime = Date.now();
 // Ticler
 app.ticker.add(() => {
 
     console.log("tick...");
+
     if (loadingEnd) {
-        image1.x = image1.x + 1;
-        if (image1.x >= WIDTH + image1.width / 2) {
-            image1.x = -image1.width / 2;
-        }
+
+        // 自機を右に移動（端まで移動でループ）
+        // image1.x = image1.x + 1;
+        // if (image1.x >= WIDTH + image1.width / 2) {
+        //     image1.x = -image1.width / 2;
+        // }
+
+        // 本のrender()での処理をここに書く
+
+        let nowTime = Math.floor((Date.now() - startTime) / 1000);
+        console.log(nowTime);
+        // ok
+
+
     }
 
 });

@@ -21,3 +21,22 @@ export class Enemy {
         console.log("攻撃した！");
     }
 }
+
+// 基本キャラクタークラス
+class Position {
+
+    constructor(x, y) {
+
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * 値を設定する
+     */
+    set(x, y) {
+
+    
+    }
+
+}
