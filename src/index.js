@@ -8,7 +8,7 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
-import { Character, Enemy } from "./character.js"
+import { Character, Enemy, Viper, CharacterTemp } from "./character.js"
 
 // PIXI.useDeprecated();
 
@@ -79,7 +79,7 @@ let loadingEnd = false;
 
 // オブジェクト呼び出し
 console.log("キャラクターtest");
-let char = Character;
+let char = CharacterTemp;
 console.log(char);
 // (app) => {
 //     a = 1;
@@ -94,6 +94,7 @@ let enem = new Enemy();
 console.log(enem.aa); // 敵名前1
 enem.attack(); // 攻撃した！
 
+let viper;
 
 // Load image and Set sprite
 const LoadImg = async () => {
@@ -104,15 +105,21 @@ const LoadImg = async () => {
     image1 = Sprite.from(texture1);
     console.log(texture1); // Texture {_events: Events, _eventsCount: 0, noFrame: true, baseTexture: _BaseTexture, _frame: Rectangle, …}
     console.log(image1); // Sprite {_events: Events, _eventsCount: 0, tempDisplayObjectParent: null, transform: _Transform, alpha: 1, …}
-    image1.anchor.set(0.5);
-    image1.x = WIDTH / 2;
-    image1.y = HEIGHT / 2 + 90;
+
+    // image1.anchor.set(0.5);
+    // image1.x = WIDTH / 2;
+    // image1.y = HEIGHT / 2 + 90;
+
     // image1.width = image1.width / 2;
     // image1.height = image1.height / 2;
-    image1.scale.set(0.5, 0.5);
+
+    // image1.scale.set(0.5, 0.5);
     // 右向きに
-    image1.rotation = 1.5;
-    container.addChild(image1);
+    // image1.rotation = 1.5;
+    // container.addChild(image1);
+
+    // 自機キャラクターを初期化する
+    viper = new Viper(container, 0, 0, image1, 0.5);
 
     // 敵機
     const texture2 = await Assets.load('assets/images/pic_enemy_space_ship.png');
@@ -179,7 +186,7 @@ startTime = Date.now();
 // Ticler
 app.ticker.add(() => {
 
-    console.log("tick...");
+    // console.log("tick...");
 
     if (loadingEnd) {
 
