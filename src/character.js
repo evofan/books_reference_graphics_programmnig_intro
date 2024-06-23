@@ -67,26 +67,31 @@ export class Character {
      * @param {PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, life, sprite, scale) {
+    constructor(container, x, y, life, sprite, scale, rotate) {
 
-        this.container = container;
-        this.position = new Position(x, y);
-        this.life = life;
-        this.sprite = sprite;
-        this.scale = scale;
+        this.container = container; // 表示用コンテナ
+        this.position = new Position(x, y); // x, y座標
+        this.life = life; // 生存期間
+        this.sprite = sprite; // 表示用スプライト
+        this.scale = scale; // 縮尺
+        this.rotate = rotate;
+        // this.x = x;
 
-        this.container.addChild(sprite);
-        sprite.scale.set(scale);
+        //this.container.addChild(sprite); // 画面に追加
 
     }
 
     /**
-     * キャラクターを配置する
+     * キャラクターを画面に配置する
      */
     draw() {
+        // console.log("★draw()");
         this.container.addChild(this.sprite);
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        this.sprite.x = this.position.x;
+        this.sprite.y = this.position.y;
+        this.sprite.scale.set(this.scale);
+        this.sprite.rotation = this.rotate;
+
     }
 
 
@@ -106,9 +111,10 @@ export class Viper extends Character {
      * @param { PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, sprite, scale) {
+    constructor(container, x, y, life, sprite, scale, rotate) {
+
         // 親クラスを呼び出す事で初期化する
-        super(container, x, y, 0, sprite, scale);
+        super(container, x, y, life, sprite, scale, rotate);
 
         // 元ではViperが登場演出中かどうかのフラグ
         // this.isComing = false;
@@ -124,7 +130,7 @@ export class Viper extends Character {
     }
 
     /**
-     * 登場演出を行う
+     * 登場演出を行う（略）
      */
     setComing() {
         //

@@ -72,6 +72,7 @@ text2.x = WIDTH - 30;
 // text2.y = HEIGHT / 2 - 10;
 text2.y = HEIGHT - 10;
 
+let texture1;
 let image1;
 let image2;
 let loadingEnd = false;
@@ -101,7 +102,7 @@ const LoadImg = async () => {
     console.log("LoadImg()");
 
     // 自機
-    const texture1 = await Assets.load('assets/images/pic_my_space_ship.png');
+    texture1 = await Assets.load('assets/images/pic_my_space_ship.png');
     image1 = Sprite.from(texture1);
     console.log(texture1); // Texture {_events: Events, _eventsCount: 0, noFrame: true, baseTexture: _BaseTexture, _frame: Rectangle, …}
     console.log(image1); // Sprite {_events: Events, _eventsCount: 0, tempDisplayObjectParent: null, transform: _Transform, alpha: 1, …}
@@ -114,12 +115,11 @@ const LoadImg = async () => {
     // image1.height = image1.height / 2;
 
     // image1.scale.set(0.5, 0.5);
+
     // 右向きに
     // image1.rotation = 1.5;
     // container.addChild(image1);
 
-    // 自機キャラクターを初期化する
-    viper = new Viper(container, 0, 0, image1, 0.5);
 
     // 敵機
     const texture2 = await Assets.load('assets/images/pic_enemy_space_ship.png');
@@ -134,7 +134,7 @@ const LoadImg = async () => {
 
     // ここでアセット分繰り返して連番で取得する？
 
-    next(); // next actions
+    init(); // next actions
 }
 
 // 画像読み込み
@@ -144,10 +144,17 @@ LoadImg();
 let dice = randomInt(1, 6);
 console.log("dice no: ", dice);
 
-const next = () => {
-    console.log("next()");
+const init = () => {
+    console.log("init()");
     // loading end flag
     loadingEnd = true;
+
+    console.log(image1);
+    console.log(container);
+
+    // 自機ヴァイパーを作成する
+    viper = new Viper(container, 100, 100, 0, image1, 0.5, 1.5);
+    viper.draw();
 
 }
 
@@ -176,7 +183,7 @@ window.addEventListener("keydown", (event) => {
             image1.y += mv;
             break;
         default:
-            console.log("ここには来ない");
+            console.log("カーソルキー以外を押した");
             break
     }
 });
@@ -199,7 +206,7 @@ app.ticker.add(() => {
         // 本のrender()での処理をここに書く
 
         let nowTime = Math.floor((Date.now() - startTime) / 1000);
-        console.log(nowTime);
+        // console.log(nowTime);
         // ok
 
 
