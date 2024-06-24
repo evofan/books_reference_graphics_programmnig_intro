@@ -153,7 +153,8 @@ const init = () => {
     console.log(container);
 
     // 自機ヴァイパーを作成する
-    viper = new Viper(container, 100, 100, 0, image1, 0.5, 1.5);
+    console.log(image1.width, image1.height);//120,240
+    viper = new Viper(container, 0, 0, image1.width, image1.height, 0, image1, 0.5, 0);
     viper.draw();
 
 }

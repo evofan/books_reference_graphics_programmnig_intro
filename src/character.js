@@ -62,20 +62,27 @@ export class Character {
      * @constructor
      * @param { PIXI.DisplayObject } container 
      * @param { number } x 
-     * @param { number } y 
+     * @param { number } x 
+     * @param { number } w 
+     * @param { number } h
      * @param { number } life 生存秒数
      * @param {PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, life, sprite, scale, rotate) {
+    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
 
         this.container = container; // 表示用コンテナ
         this.position = new Position(x, y); // x, y座標
+        // this.x = x;
+        // this.y = y;
+        this.width = w;
+        this.height = h;
         this.life = life; // 生存期間
         this.sprite = sprite; // 表示用スプライト
         this.scale = scale; // 縮尺
+        console.log(this.scale);
         this.rotate = rotate;
-        // this.x = x;
+
 
         //this.container.addChild(sprite); // 画面に追加
 
@@ -85,12 +92,26 @@ export class Character {
      * キャラクターを画面に配置する
      */
     draw() {
-        // console.log("★draw()");
+
+        let offsetX = this.width / 2 * this.scale;
+        let offsetY = this.height / 2 * this.scale;
+        console.log(offsetX, offsetY);//60,120 → 30,60
+
+        // must
+        this.sprite.x = this.position.x - offsetX;
+        this.sprite.y = this.position.y - offsetY;
+
+        // 
         this.container.addChild(this.sprite);
-        this.sprite.x = this.position.x;
-        this.sprite.y = this.position.y;
+
         this.sprite.scale.set(this.scale);
         this.sprite.rotation = this.rotate;
+
+        console.log(this.sprite.x, this.sprite.y); // 0,0
+        console.log(this.position.x, this.position.y);//-120,100…呼び出し時の引数
+
+        // this.sprite.x = this.position.x - offsetX;
+        // this.sprite.y = this.position.y - offsetY;
 
     }
 
@@ -108,13 +129,15 @@ export class Viper extends Character {
      * @param { PIXI.DisplayObject } container 
      * @param { number } x 
      * @param { number } y 
+     * @param { number } w 
+     * @param { number } h
      * @param { PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, life, sprite, scale, rotate) {
+    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
 
         // 親クラスを呼び出す事で初期化する
-        super(container, x, y, life, sprite, scale, rotate);
+        super(container, x, y, w, h, life, sprite, scale, rotate);
 
         // 元ではViperが登場演出中かどうかのフラグ
         // this.isComing = false;
