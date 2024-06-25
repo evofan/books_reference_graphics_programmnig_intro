@@ -78,6 +78,7 @@ text2.y = HEIGHT - 10;
 let texture1;
 let image1;
 let image2;
+let image3;
 let loadingEnd = false;
 
 
@@ -135,6 +136,19 @@ const LoadImg = async () => {
     image2.scale.set(0.5, 0.5);
     image2.rotation = 2;
     container.addChild(image2);
+
+    // 自分弾
+    
+    const texture3 = await Assets.load('assets/images/pic_tama_81x61.png');
+    image3 = Sprite.from(texture3);
+    console.log(texture3);
+    console.log(image3);
+    image3.anchor.set(0.5);
+    image3.x = WIDTH / 2;
+    image3.y = HEIGHT / 2 - 30;
+    // image3.scale.set(0.5, 0.5);
+    container.addChild(image3);
+
 
     // ここでアセット分繰り返して連番で取得する？
 

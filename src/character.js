@@ -200,3 +200,49 @@ export class Viper extends Character {
 
     }
 }
+
+/**
+ * ショット（プレイヤーの弾）クラス
+ */
+export class Shot extends Character {
+
+    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
+
+        // 親クラスのコンストラクターを呼び出し
+        super(container, x, y, w, h, life, sprite, scale, rotate);
+
+        // 弾の速さ
+        this.speed = 7;
+
+    }
+
+    // ショットを配置する
+    set(x, y) {
+        this.position.set(x, y);
+
+        // 生存期間を設定
+        this.life = 1;
+    }
+
+    // 描画を更新する
+    update() {
+
+        // lifeが0以下なら抜け
+        if (this.life <= 0) {
+            return false;
+        }
+
+        // 弾が画面上外ならlifeを0にする（消去）
+        if (this.position.y + this.height < 0) {
+            this.life = 0;
+        }
+
+        // 弾を上に移動する
+        this.position.y -= this.speed;
+
+        // 描画する
+        this.draw();
+    }
+
+
+}
