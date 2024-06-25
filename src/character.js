@@ -95,7 +95,7 @@ export class Character {
 
         let offsetX = this.width / 2 * this.scale; // 縮尺も考慮
         let offsetY = this.height / 2 * this.scale;
-        console.log(offsetX, offsetY);//60,120 → 30,60
+        // console.log(offsetX, offsetY);//60,120 → 30,60
 
         // must、soriteの座標をpositionのx,yに合わせる
         this.sprite.x = this.position.x - offsetX;
@@ -107,8 +107,8 @@ export class Character {
         this.sprite.scale.set(this.scale);
         this.sprite.rotation = this.rotate;
 
-        console.log(this.sprite.x, this.sprite.y); // 0,0
-        console.log(this.position.x, this.position.y);//-120,100…呼び出し時の引数
+        // console.log(this.sprite.x, this.sprite.y); // 0,0
+        // console.log(this.position.x, this.position.y);//-120,100…呼び出し時の引数
 
         // this.sprite.x = this.position.x - offsetX;
         // this.sprite.y = this.position.y - offsetY;
@@ -184,9 +184,19 @@ export class Viper extends Character {
 
         }
 
+        // 移動後の位置が画面外へ出ていないか確認して修正する
+        /// let canvasWidth = WIDTH; // WIDTH is not defined
+        // let canvasHeight = HEIGHT;
+        // let canvasWidth = this.container.width;
+        // console.log(this.container.width)
+
+        // TODO: not hardcode（コンテナのサイズが小さくなってるのでそれを直す）
+        let tx = Math.min(Math.max(this.position.x, 0), 480/*this.container.width*/);
+        let ty = Math.min(Math.max(this.position.y, 0), 320/*this.container.height*/);
+        this.position.set(tx, ty);
+
         // 自機キャラクターを描画する
         this.draw();
-
 
     }
 }

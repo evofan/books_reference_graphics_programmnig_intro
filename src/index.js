@@ -24,23 +24,26 @@ let app = new PIXI.Application({
     width: WIDTH,
     height: HEIGHT,
     backgroundColor: BG_COLOR,
-    // resolution: window.devicePixelRatio || 1,
+    resolution: window.devicePixelRatio || 1,
     autoResize: true
 });
 document.body.appendChild(app.view);
 
 // container
 let container = new PIXI.Container();
-container.width = WIDTH;
-container.height = HEIGHT;
+
 container.x = 0;
 container.y = 0;
-container.pivot.x = 0.5;
-container.pivot.y = 0.5;
+// container.pivot.x = 0.5;
+// container.pivot.y = 0.5;
 // container.interactive = false;
 // container.interactiveChildren = true;
 container.buttonMode = false;
 app.stage.addChild(container);
+
+container.width = WIDTH;
+container.height = HEIGHT;
+// console.log("★1st",container.width);
 
 // PixiJS Deprecation Warning: Setting interactive is deprecated, use eventMode = 'none'/'passive'/'auto'/'static'/'dynamic' instead.Deprecated since v7.2.0
 
@@ -150,7 +153,7 @@ const init = () => {
 
 
     console.log(image1);
-    console.log(container);
+    console.log(container);// container2
 
     // 自機ヴァイパーを作成する
     console.log(image1.width, image1.height);//120,240
@@ -197,12 +200,10 @@ function eventSetting() {
 
 }
 
-let mv = 10;
-
+// 以下自機クラスに移動
+// let mv = 10;
 // window.addEventListener("keydown", (event) => {
-
 // 本だとここで登場（シーン）時はreturn
-
 //     switch (event.key) {
 //         case "ArrowLeft":
 //             image1.x -= mv;
@@ -243,28 +244,9 @@ app.ticker.add(() => {
         // console.log(nowTime);
         // ok
 
-        // ref err
+        // ref err?
         // viper.update();
         // viper.update();
-
-        // if (window.isKeyDown.ArrowLeft === true) {
-        //     this.position.x -= this.speed;
-        // }
-
-        // if (window.isKeyDown.ArrowRight === true) {
-        //     this.position.x += this.speed;
-
-        // }
-
-        // if (window.isKeyDown.ArrowUp === true) {
-        //     this.position.y -= this.speed;
-
-        // }
-
-        // if (window.isKeyDown.ArrowDown === true) {
-        //     this.position.y -= this.speed;
-
-        // }
 
         // console.log("viper:", viper);
         // viper.setComing();
