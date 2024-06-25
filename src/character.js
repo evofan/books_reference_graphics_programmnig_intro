@@ -69,7 +69,7 @@ export class Character {
      * @param {PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
+    constructor(container, x, y, w, h, life, sprite, scale = 1, rotate) {
 
         this.container = container; // 表示用コンテナ
         this.position = new Position(x, y); // x, y座標
@@ -93,11 +93,11 @@ export class Character {
      */
     draw() {
 
-        let offsetX = this.width / 2 * this.scale;
+        let offsetX = this.width / 2 * this.scale; // 縮尺も考慮
         let offsetY = this.height / 2 * this.scale;
         console.log(offsetX, offsetY);//60,120 → 30,60
 
-        // must
+        // must、soriteの座標をpositionのx,yに合わせる
         this.sprite.x = this.position.x - offsetX;
         this.sprite.y = this.position.y - offsetY;
 
@@ -150,12 +150,43 @@ export class Viper extends Character {
 
         // 求めた Y 座標を自機に設定する
         // viper.position.set(viper.position.x, y);
+
+        this.speed = 3;
     }
 
     /**
      * 登場演出を行う（略）
      */
     setComing() {
-        //
+        console.log("setComing()");
+    }
+
+    update() {
+
+        // console.log("update()");
+
+        if (window.isKeyDown.key_ArrowLeft === true) {
+            this.position.x -= this.speed;
+        }
+
+        if (window.isKeyDown.key_ArrowRight === true) {
+            this.position.x += this.speed;
+
+        }
+
+        if (window.isKeyDown.key_ArrowUp === true) {
+            this.position.y -= this.speed;
+
+        }
+
+        if (window.isKeyDown.key_ArrowDown === true) {
+            this.position.y += this.speed;
+
+        }
+
+        // 自機キャラクターを描画する
+        this.draw();
+
+
     }
 }

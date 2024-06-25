@@ -128,8 +128,9 @@ const LoadImg = async () => {
     console.log(image2);
     image2.anchor.set(0.5);
     image2.x = WIDTH / 2;
-    image2.y = HEIGHT / 2 + 90;
+    image2.y = HEIGHT / 2 - 90;
     image2.scale.set(0.5, 0.5);
+    image2.rotation = 2;
     container.addChild(image2);
 
     // ここでアセット分繰り返して連番で取得する？
@@ -146,16 +147,28 @@ console.log("dice no: ", dice);
 
 const init = () => {
     console.log("init()");
-    // loading end flag
-    loadingEnd = true;
+
 
     console.log(image1);
     console.log(container);
 
     // 自機ヴァイパーを作成する
     console.log(image1.width, image1.height);//120,240
-    viper = new Viper(container, 0, 0, image1.width, image1.height, 0, image1, 0.5, 0);
-    viper.draw();
+
+    let startX = WIDTH / 2; // + (image1.width / 2) * 0.5;; // 自機のoffset分はクラス側で考慮
+    let startY = HEIGHT - (image1.height / 2) * 0.5; // 画面下に配置
+    viper = new Viper(container, startX, startY, image1.width, image1.height, 0, image1, 0.5, 0);
+    viper.draw(); // ok
+
+    viper.setComing();
+
+    viper.update();
+
+    // イベントを設定する
+    eventSetting();
+
+    // loading end flag
+    loadingEnd = true;
 
 }
 
@@ -164,30 +177,50 @@ let startTime = null;
 // view todays date
 // let today = displayDateText(app);
 
+
+// 移動関連
+window.isKeyDown = {};
+
+function eventSetting() {
+
+    console.log("eventSetting()");
+
+    window.addEventListener("keydown", (event) => {
+        console.log("keydown");
+        isKeyDown[`key_${event.key}`] = true;
+    }, false);
+
+    window.addEventListener("keyup", (event) => {
+        console.log("keyup");
+        isKeyDown[`key_${event.key}`] = false;
+    }, false);
+
+}
+
 let mv = 10;
 
-window.addEventListener("keydown", (event) => {
+// window.addEventListener("keydown", (event) => {
 
-    // 本だとここで登場（シーン）時はreturn
+// 本だとここで登場（シーン）時はreturn
 
-    switch (event.key) {
-        case "ArrowLeft":
-            image1.x -= mv;
-            break;
-        case "ArrowRight":
-            image1.x += mv;
-            break;
-        case "ArrowUp":
-            image1.y -= mv;
-            break;
-        case "ArrowDown":
-            image1.y += mv;
-            break;
-        default:
-            console.log("カーソルキー以外を押した");
-            break
-    }
-});
+//     switch (event.key) {
+//         case "ArrowLeft":
+//             image1.x -= mv;
+//             break;
+//         case "ArrowRight":
+//             image1.x += mv;
+//             break;
+//         case "ArrowUp":
+//             image1.y -= mv;
+//             break;
+//         case "ArrowDown":
+//             image1.y += mv;
+//             break;
+//         default:
+//             console.log("カーソルキー以外を押した");
+//             break
+//     }
+// });
 
 // 本のrenderに相当
 startTime = Date.now();
@@ -210,8 +243,39 @@ app.ticker.add(() => {
         // console.log(nowTime);
         // ok
 
+        // ref err
+        // viper.update();
+        // viper.update();
+
+        // if (window.isKeyDown.ArrowLeft === true) {
+        //     this.position.x -= this.speed;
+        // }
+
+        // if (window.isKeyDown.ArrowRight === true) {
+        //     this.position.x += this.speed;
+
+        // }
+
+        // if (window.isKeyDown.ArrowUp === true) {
+        //     this.position.y -= this.speed;
+
+        // }
+
+        // if (window.isKeyDown.ArrowDown === true) {
+        //     this.position.y -= this.speed;
+
+        // }
+
+        // console.log("viper:", viper);
+        // viper.setComing();
+        viper.update();
+
+
 
     }
+
+
+
 
 });
 
