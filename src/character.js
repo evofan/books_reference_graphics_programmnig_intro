@@ -273,7 +273,7 @@ export class Shot extends Character {
 
     // ショットを配置する
     set(x, y) {
-        this.position.set(x + this.w / 2, y + this.h / 2);
+        this.position.set(x + this.w / 2 * this.scale, y + this.h / 2 * this.scale);
 
         // 生存期間を設定
         this.life = 1;

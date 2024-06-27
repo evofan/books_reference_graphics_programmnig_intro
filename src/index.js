@@ -153,7 +153,7 @@ const LoadImg = async () => {
 
     // 自分弾
 
-    const texture3 = await Assets.load('assets/images/pic_tama_81x61.png');
+    const texture3 = await Assets.load('assets/images/pic_tama_81x61_02.png');
     for (let i = 0; i <  + SHOT_MAX_COUNT; i++) {
         image_shot[i] = Sprite.from(texture3);
         console.log(texture3);
@@ -161,8 +161,9 @@ const LoadImg = async () => {
         image_shot[i].anchor.set(0.5);
         image_shot[i].x = WIDTH / 2;
         image_shot[i].y = HEIGHT / 2 - 30;
+        // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
     }
-    // image3.scale.set(0.5, 0.5);
+
     // container.addChild(image3);
 
 
@@ -200,7 +201,7 @@ const init = () => {
     // 弾関連
     // ショットを生成する
     for (let i = 0; i < SHOT_MAX_COUNT; i++) {
-        shotArray[i] = new Shot(container, 0, 0, 81, 61, 0, image_shot[i], 1, 0);
+        shotArray[i] = new Shot(container, 0, 0, 81, 61, 0, image_shot[i], 0.5, 0);
     }
 
 
