@@ -8,7 +8,7 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
-import { Character, Enemy, Viper, CharacterTemp } from "./character.js"
+import { Character, Enemy, Viper, CharacterTemp, Shot } from "./character.js"
 
 // PIXI.useDeprecated();
 
@@ -78,7 +78,13 @@ text2.y = HEIGHT - 10;
 let texture1;
 let image1;
 let image2;
-let image3;
+let image_shot = [];
+// let image13;
+// let image14;
+// let image15;
+// let image16;
+// let image17;
+
 let loadingEnd = false;
 
 
@@ -99,7 +105,15 @@ let enem = new Enemy();
 console.log(enem.aa); // 敵名前1
 enem.attack(); // 攻撃した！
 
+// 自機クラス
 let viper;
+
+// 最大弾数
+const SHOT_MAX_COUNT = 5;
+
+// ショットのインスタンスを格納する配列
+let shotArray = [];
+
 
 // Load image and Set sprite
 const LoadImg = async () => {
@@ -138,16 +152,18 @@ const LoadImg = async () => {
     container.addChild(image2);
 
     // 自分弾
-    
+
     const texture3 = await Assets.load('assets/images/pic_tama_81x61.png');
-    image3 = Sprite.from(texture3);
-    console.log(texture3);
-    console.log(image3);
-    image3.anchor.set(0.5);
-    image3.x = WIDTH / 2;
-    image3.y = HEIGHT / 2 - 30;
+    for (let i = 0; i <  + SHOT_MAX_COUNT; i++) {
+        image_shot[i] = Sprite.from(texture3);
+        console.log(texture3);
+        console.log(image_shot[i]);
+        image_shot[i].anchor.set(0.5);
+        image_shot[i].x = WIDTH / 2;
+        image_shot[i].y = HEIGHT / 2 - 30;
+    }
     // image3.scale.set(0.5, 0.5);
-    container.addChild(image3);
+    // container.addChild(image3);
 
 
     // ここでアセット分繰り返して連番で取得する？
@@ -180,6 +196,18 @@ const init = () => {
     viper.setComing();
 
     viper.update();
+
+    // 弾関連
+    // ショットを生成する
+    for (let i = 0; i < SHOT_MAX_COUNT; i++) {
+        shotArray[i] = new Shot(container, 0, 0, 81, 61, 0, image_shot[i], 1, 0);
+    }
+
+
+    // ショットを自機キャラクターに設定する
+    viper.setShotArray(shotArray);
+
+
 
     // イベントを設定する
     eventSetting();
@@ -266,7 +294,10 @@ app.ticker.add(() => {
         // viper.setComing();
         viper.update();
 
-
+        // ショットの状態を更新する
+        shotArray.map((v) => {
+            v.update();
+        });
 
     }
 
@@ -274,6 +305,4 @@ app.ticker.add(() => {
 
 
 });
-
-
 

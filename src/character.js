@@ -152,6 +152,15 @@ export class Viper extends Character {
         // viper.position.set(viper.position.x, y);
 
         this.speed = 3;
+
+        // 自機の弾管理用
+        // @type{Array<shot>}
+        this.shotArray = null;
+
+        this.shotCheckCounter = 0;
+
+        this.shotInterval = 10;
+
     }
 
     /**
@@ -161,9 +170,20 @@ export class Viper extends Character {
         console.log("setComing()");
     }
 
+    /**
+     * ショットを設定する（外部から呼ばれる）
+     * @param {*} shotArray 
+     */
+    setShotArray(shotArray) {
+        this.shotArray = shotArray;
+    }
+
+
     update() {
 
         // console.log("update()");
+
+        // ★TODO: タッチ対応
 
         if (window.isKeyDown.key_ArrowLeft === true) {
             this.position.x -= this.speed;
@@ -191,9 +211,37 @@ export class Viper extends Character {
         // console.log(this.container.width)
 
         // TODO: not hardcode（コンテナのサイズが小さくなってるのでそれを直す）
-        let tx = Math.min(Math.max(this.position.x, 0), 480/*this.container.width*/);
-        let ty = Math.min(Math.max(this.position.y, 0), 320/*this.container.height*/);
+        let tx = Math.min(Math.max(this.position.x, 0), 640/*this.container.width*/);
+        let ty = Math.min(Math.max(this.position.y, 0), 480/*this.container.height*/);
         this.position.set(tx, ty);
+
+
+        // キーの押下を調べてショットを生成する
+        if (window.isKeyDown.key_z === true) {
+
+            if (this.shotCheckCounter >= 0) {
+
+                for (let i = 0; i < this.shotArray.length; i++) {
+
+                    // 非生存であれば生成する
+                    if (this.shotArray[i].life <= 0) {
+
+                        // 自機キャラと同じバ場所にショットを生成する
+                        this.shotArray[i].set(this.position.x, this.position.y);
+
+                        this.shotCheckCounter = -this.shotInterval;
+
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        this.shotCheckCounter++;
+
+
+
 
         // 自機キャラクターを描画する
         this.draw();
@@ -214,11 +262,18 @@ export class Shot extends Character {
         // 弾の速さ
         this.speed = 7;
 
+        this.w = w;
+
+        this.h = h;
+
+
+        // this.scale.set(scale, scale);
+
     }
 
     // ショットを配置する
     set(x, y) {
-        this.position.set(x, y);
+        this.position.set(x + this.w / 2, y + this.h / 2);
 
         // 生存期間を設定
         this.life = 1;
@@ -229,7 +284,7 @@ export class Shot extends Character {
 
         // lifeが0以下なら抜け
         if (this.life <= 0) {
-            return false;
+            return;
         }
 
         // 弾が画面上外ならlifeを0にする（消去）
