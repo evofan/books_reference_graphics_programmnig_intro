@@ -147,6 +147,8 @@ export class Viper extends Character {
         // 自機の弾管理用
         // @type{Array<shot>}
         this.shotArray = null;
+        // 斜め弾
+        this.shotArray_single = null;
 
         // Shot一定間隔で発射するための管理値
         this.shotCheckCounter = 0;
@@ -166,9 +168,11 @@ export class Viper extends Character {
      * ショットを設定する（外部から呼ばれる）
      * @param {*} shotArray 
      */
-    setShotArray(shotArray) {
+    setShotArray(shotArray, shotArray_single) {
         // 自機の弾配列に引数で貰った値を割り当てる
         this.shotArray = shotArray;
+        // 斜め弾
+        this.shotArray_single = shotArray_single;
     }
 
     /**
@@ -217,6 +221,7 @@ export class Viper extends Character {
             // カウンターが0未満の間は弾を発射しない
             if (this.shotCheckCounter >= 0) {
 
+                // 通常弾
                 for (let i = 0; i < this.shotArray.length; i++) {
 
                     // 非生存であれば生成する
@@ -228,10 +233,33 @@ export class Viper extends Character {
                         // -10を設定（時間貯める用）
                         this.shotCheckCounter = -this.shotInterval;
 
+                        // 抜ける
                         break;
                     }
 
                 }
+
+                // 斜め弾
+                for (let i = 0; i < this.shotArray_single.length; i += 2) {
+
+                    // 非生存であれば生成する
+                    if (this.shotArray_single[i].life <= 0 && this.shotArray_single[i + 1].life <= 0) {
+
+                        // 自機キャラと同じバ場所にショットを生成する
+                        this.shotArray_single[i].set(this.position.x, this.position.y);
+                        this.shotArray_single[i].setVector(0.2, -0.9); // やや右に向かう
+                        this.shotArray_single[i + 1].set(this.position.x, this.position.y);
+                        this.shotArray_single[i + 1].setVector(-0.2, -0.9); // やや左に向かう
+
+                        // -10を設定（時間貯める用）
+                        this.shotCheckCounter = -this.shotInterval;
+
+                        // 抜ける
+                        break;
+                    }
+
+                }
+
             }
         }
 
@@ -262,6 +290,9 @@ export class Shot extends Character {
 
         // this.scale.set(scale, scale);
 
+        // 弾の方向（x+-, y+-）
+        this.vector = new Position(0.0, -1.0); // -1は上方向
+
     }
 
     // ショットを配置する
@@ -272,12 +303,17 @@ export class Shot extends Character {
         this.life = 1;
     }
 
+    // 方向を設定する
+    setVector(x, y) {
+        this.vector.set(x, y);
+    }
+
     // 描画を更新する
     update() {
 
         // lifeが0以下なら抜け
         if (this.life <= 0) {
-            return;
+            return false;
         }
 
         // 弾が画面上外ならlifeを0にする（消去）
@@ -286,7 +322,10 @@ export class Shot extends Character {
         }
 
         // 弾を上に移動する
-        this.position.y -= this.speed;
+        // this.position.y -= this.speed;
+        // ↓進行方向の概念を追加
+        this.position.x += this.vector.x * this.speed;
+        this.position.y += this.vector.y * this.speed;
 
         // 描画する
         this.draw();

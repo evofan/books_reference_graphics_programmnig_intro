@@ -78,6 +78,8 @@ let texture1;
 let image1;
 let image2;
 let image_shot = [];
+let image_shot_single = [];
+let image_shot_single_left = [];
 
 // loading flag
 let loadingEnd = false;
@@ -103,7 +105,8 @@ const SHOT_MAX_COUNT = 5;
 
 // ショットのインスタンスを格納する配列
 let shotArray = [];
-
+// ショット（シングル＝斜め用）のインスタンスを格納する配列
+let shotArray_single = [];
 
 // Load image and Set sprite
 const LoadImg = async () => {
@@ -142,16 +145,46 @@ const LoadImg = async () => {
     container.addChild(image2);
 
     // 自分弾
-
     const texture3 = await Assets.load('assets/images/pic_tama_81x61_02.png');
-    for (let i = 0; i <  + SHOT_MAX_COUNT; i++) {
+    for (let i = 0; i < + SHOT_MAX_COUNT; i++) {
         image_shot[i] = Sprite.from(texture3);
         console.log(texture3);
         console.log(image_shot[i]);
         image_shot[i].anchor.set(0.5);
         image_shot[i].x = WIDTH / 2;
         image_shot[i].y = HEIGHT / 2 - 30;
+        // container.addChild(image_shot[i]); // 確認用
         // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
+    }
+
+    // 自分弾（シングルショット＝斜め発射用）右用
+    const texture4 = await Assets.load('assets/images/pic_tama_81x61_02_single.png');
+    for (let i = 0; i < + SHOT_MAX_COUNT; i++) {
+        image_shot_single[i] = Sprite.from(texture4);
+        console.log(texture4);
+        console.log(image_shot_single[i]);
+        image_shot_single[i].anchor.set(0.5);
+        image_shot_single[i].x = WIDTH / 2;
+        image_shot_single[i].y = HEIGHT / 2 - 30;
+        // image_shot_single[i].rotation = 2;
+        // container.addChild(image_shot_single[i]);
+        // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
+
+    }
+
+    // 自分弾（シングルショット＝斜め発射用）左用
+    const texture5 = await Assets.load('assets/images/pic_tama_81x61_02_single.png');
+    for (let i = 0; i < + SHOT_MAX_COUNT; i++) {
+        image_shot_single_left[i] = Sprite.from(texture5);
+        console.log(texture5);
+        console.log(image_shot_single_left[i]);
+        image_shot_single_left[i].anchor.set(0.5);
+        image_shot_single_left[i].x = WIDTH / 2;
+        image_shot_single_left[i].y = HEIGHT / 2 - 30;
+        // image_shot_single[i].rotation = 2;
+        // container.addChild(image_shot_single[i]);
+        // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
+
     }
 
     init(); // next actions
@@ -187,10 +220,15 @@ const init = () => {
     // ショットを生成する
     for (let i = 0; i < SHOT_MAX_COUNT; i++) {
         shotArray[i] = new Shot(container, 0, 0, 81, 61, 0, image_shot[i], 0.5, 0);
+        // シングルショット（斜め用）
+        shotArray_single[i * 2] = new Shot(container, 0, 0, 81, 61, 0, image_shot_single[i], 0.5, 0);
+        shotArray_single[i * 2 + 1] = new Shot(container, 0, 0, 81, 61, 0, image_shot_single_left[i], 0.5, 0); // 生成でなくスプライトでやってるので別配列で
     }
 
+
     // ショットを自機キャラクターに設定する
-    viper.setShotArray(shotArray);
+    // viper.setShotArray(shotArray);
+    viper.setShotArray(shotArray, shotArray_single); // 斜め用の弾を追加
 
     // （キー）イベントを設定する
     eventSetting();
@@ -279,6 +317,10 @@ app.ticker.add(() => {
 
         // ショットの状態を更新する
         shotArray.map((v) => {
+            v.update();
+        });
+        // 斜めのショット
+        shotArray_single.map((v) => {
             v.update();
         });
 
