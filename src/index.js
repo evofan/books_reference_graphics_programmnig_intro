@@ -8,7 +8,7 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
-import { Character, Enemy, Viper, CharacterTemp, Shot } from "./character.js"
+import { Character, EnemyTemp, Viper, CharacterTemp, Shot } from "./character.js"
 
 // PIXI.useDeprecated();
 
@@ -17,7 +17,6 @@ const HEIGHT = STAGES.HEIGHT;
 const BG_COLOR = STAGES.BG_COLOR;
 
 console.log("window.devicePixelRatio: ", window.devicePixelRatio); // window.devicePixelRatio:  2
-
 
 // init
 let app = new PIXI.Application({
@@ -43,12 +42,12 @@ app.stage.addChild(container);
 
 container.width = WIDTH;
 container.height = HEIGHT;
-// console.log("★1st",container.width);
+// console.log("★1st",container.width); // ★1st 0
 
-// PixiJS Deprecation Warning: Setting interactive is deprecated, use eventMode = 'none'/'passive'/'auto'/'static'/'dynamic' instead.Deprecated since v7.2.0
+// PixiJS Deprecation Warning: Setting interactive is deprecated, 
+// use eventMode = 'none'/'passive'/'auto'/'static'/'dynamic' instead.Deprecated since v7.2.0
 
 let temp = `PixiJS Ver:`;
-console.log(temp);
 let text1 = new PIXI.Text(temp, {
     fontSize: 20,
     fill: 0xfefefe,
@@ -62,7 +61,7 @@ text1.x = WIDTH - 110;
 text1.y = HEIGHT - 10;
 
 let temp2 = `${PIXI.VERSION}`;
-console.log(temp2);
+// onsole.log(temp2); // 7.3.2
 let text2 = new PIXI.Text(temp2, {
     fontSize: 20,
     fill: 0xff0033,
@@ -79,36 +78,27 @@ let texture1;
 let image1;
 let image2;
 let image_shot = [];
-// let image13;
-// let image14;
-// let image15;
-// let image16;
-// let image17;
 
+// loading flag
 let loadingEnd = false;
 
 
 // オブジェクト呼び出し
 console.log("キャラクターtest");
 let char = CharacterTemp;
-console.log(char);
-// (app) => {
-//     a = 1;
-// } 関数
-// {a: 1} オブジェクト
-// クラス？
+console.log(char); // {a: 1, b: 'かきくけこ'}
 console.log(char.a);// 1
 console.log(char.b);// かきくけこ
 
 // クラスインスタンス作成＆呼び出し
-let enem = new Enemy();
+let enem = new EnemyTemp();
 console.log(enem.aa); // 敵名前1
 enem.attack(); // 攻撃した！
 
 // 自機クラス
 let viper;
 
-// 最大弾数
+// 自機最大弾数
 const SHOT_MAX_COUNT = 5;
 
 // ショットのインスタンスを格納する配列
@@ -125,6 +115,7 @@ const LoadImg = async () => {
     console.log(texture1); // Texture {_events: Events, _eventsCount: 0, noFrame: true, baseTexture: _BaseTexture, _frame: Rectangle, …}
     console.log(image1); // Sprite {_events: Events, _eventsCount: 0, tempDisplayObjectParent: null, transform: _Transform, alpha: 1, …}
 
+    // ここで生成せずにクラスで作成に移行
     // image1.anchor.set(0.5);
     // image1.x = WIDTH / 2;
     // image1.y = HEIGHT / 2 + 90;
@@ -137,7 +128,6 @@ const LoadImg = async () => {
     // 右向きに
     // image1.rotation = 1.5;
     // container.addChild(image1);
-
 
     // 敵機
     const texture2 = await Assets.load('assets/images/pic_enemy_space_ship.png');
@@ -164,11 +154,6 @@ const LoadImg = async () => {
         // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
     }
 
-    // container.addChild(image3);
-
-
-    // ここでアセット分繰り返して連番で取得する？
-
     init(); // next actions
 }
 
@@ -177,11 +162,11 @@ LoadImg();
 
 // RandomInt test（helper関数）
 let dice = randomInt(1, 6);
-console.log("dice no: ", dice);
+console.log("dice no: ", dice); // 1-6
 
+// 初期化
 const init = () => {
     console.log("init()");
-
 
     console.log(image1);
     console.log(container);// container2
@@ -194,7 +179,7 @@ const init = () => {
     viper = new Viper(container, startX, startY, image1.width, image1.height, 0, image1, 0.5, 0);
     viper.draw(); // ok
 
-    viper.setComing();
+    // viper.setComing();
 
     viper.update();
 
@@ -204,13 +189,10 @@ const init = () => {
         shotArray[i] = new Shot(container, 0, 0, 81, 61, 0, image_shot[i], 0.5, 0);
     }
 
-
     // ショットを自機キャラクターに設定する
     viper.setShotArray(shotArray);
 
-
-
-    // イベントを設定する
+    // （キー）イベントを設定する
     eventSetting();
 
     // loading end flag
@@ -222,7 +204,6 @@ let startTime = null;
 
 // view todays date
 // let today = displayDateText(app);
-
 
 // 移動関連
 window.isKeyDown = {};
@@ -268,6 +249,7 @@ function eventSetting() {
 
 // 本のrenderに相当
 startTime = Date.now();
+
 // Ticler
 app.ticker.add(() => {
 
@@ -302,8 +284,4 @@ app.ticker.add(() => {
 
     }
 
-
-
-
 });
-

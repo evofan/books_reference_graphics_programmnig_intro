@@ -6,17 +6,9 @@ export const CharacterTemp = {
     b: "かきくけこ"
 }
 
-// stage settings
-// export const STAGES = {
-//     WIDTH: 480,
-//     HEIGHT: 320,
-//     BG_COLOR: 0x000000,
-// };
-
 // 敵クラス
-export class Enemy {
+export class EnemyTemp {
     aa = "敵名前1";
-
     attack() {
         console.log("攻撃した！");
     }
@@ -83,8 +75,7 @@ export class Character {
         console.log(this.scale);
         this.rotate = rotate;
 
-
-        //this.container.addChild(sprite); // 画面に追加
+        //this.container.addChild(sprite); // 画面に追加 -> drawで
 
     }
 
@@ -101,7 +92,7 @@ export class Character {
         this.sprite.x = this.position.x - offsetX;
         this.sprite.y = this.position.y - offsetY;
 
-        // 
+        // 画面に追加（配置）する
         this.container.addChild(this.sprite);
 
         this.sprite.scale.set(this.scale);
@@ -157,8 +148,8 @@ export class Viper extends Character {
         // @type{Array<shot>}
         this.shotArray = null;
 
+        // Shot一定間隔で発射するための管理値
         this.shotCheckCounter = 0;
-
         this.shotInterval = 10;
 
     }
@@ -168,6 +159,7 @@ export class Viper extends Character {
      */
     setComing() {
         console.log("setComing()");
+        // 登場処理
     }
 
     /**
@@ -175,33 +167,36 @@ export class Viper extends Character {
      * @param {*} shotArray 
      */
     setShotArray(shotArray) {
+        // 自機の弾配列に引数で貰った値を割り当てる
         this.shotArray = shotArray;
     }
 
-
+    /**
+     * キャラクターを更新する
+     */
     update() {
 
         // console.log("update()");
 
         // ★TODO: タッチ対応
 
+        // カーソルキー入力に応じた移動処理
+        // ←
         if (window.isKeyDown.key_ArrowLeft === true) {
             this.position.x -= this.speed;
         }
-
+        // →
         if (window.isKeyDown.key_ArrowRight === true) {
             this.position.x += this.speed;
 
         }
-
+        // ↑
         if (window.isKeyDown.key_ArrowUp === true) {
             this.position.y -= this.speed;
-
         }
-
+        // ↓
         if (window.isKeyDown.key_ArrowDown === true) {
             this.position.y += this.speed;
-
         }
 
         // 移動後の位置が画面外へ出ていないか確認して修正する
@@ -210,15 +205,16 @@ export class Viper extends Character {
         // let canvasWidth = this.container.width;
         // console.log(this.container.width)
 
-        // TODO: not hardcode（コンテナのサイズが小さくなってるのでそれを直す）
-        let tx = Math.min(Math.max(this.position.x, 0), 640/*this.container.width*/);
-        let ty = Math.min(Math.max(this.position.y, 0), 480/*this.container.height*/);
+        // TODO: do not use hardcode（コンテナのサイズが小さくなってるのでそれを直す）
+        let tx = Math.min(Math.max(this.position.x, 0), 640 /*this.container.width*/);
+        let ty = Math.min(Math.max(this.position.y, 0), 480 /*this.container.height*/);
         this.position.set(tx, ty);
 
 
         // キーの押下を調べてショットを生成する
         if (window.isKeyDown.key_z === true) {
 
+            // カウンターが0未満の間は弾を発射しない
             if (this.shotCheckCounter >= 0) {
 
                 for (let i = 0; i < this.shotArray.length; i++) {
@@ -229,6 +225,7 @@ export class Viper extends Character {
                         // 自機キャラと同じバ場所にショットを生成する
                         this.shotArray[i].set(this.position.x, this.position.y);
 
+                        // -10を設定（時間貯める用）
                         this.shotCheckCounter = -this.shotInterval;
 
                         break;
@@ -239,9 +236,6 @@ export class Viper extends Character {
         }
 
         this.shotCheckCounter++;
-
-
-
 
         // 自機キャラクターを描画する
         this.draw();
@@ -265,7 +259,6 @@ export class Shot extends Character {
         this.w = w;
 
         this.h = h;
-
 
         // this.scale.set(scale, scale);
 
