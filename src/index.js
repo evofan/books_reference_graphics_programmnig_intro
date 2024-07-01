@@ -8,7 +8,9 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
-import { Character, EnemyTemp, Viper, CharacterTemp, Shot, Enemy } from "./character.js"
+import { Character, EnemyTemp, Viper, CharacterTemp, Shot, Enemy } from "./character.js";
+
+import { SceneManager } from "./scene.js";
 
 // PIXI.useDeprecated();
 
