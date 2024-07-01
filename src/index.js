@@ -8,7 +8,7 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
-import { Character, EnemyTemp, Viper, CharacterTemp, Shot } from "./character.js"
+import { Character, EnemyTemp, Viper, CharacterTemp, Shot, Enemy } from "./character.js"
 
 // PIXI.useDeprecated();
 
@@ -80,6 +80,7 @@ let image2;
 let image_shot = [];
 let image_shot_single = [];
 let image_shot_single_left = [];
+let image_enemy = [];
 
 // loading flag
 let loadingEnd = false;
@@ -102,6 +103,12 @@ let viper;
 
 // 自機最大弾数
 const SHOT_MAX_COUNT = 5;
+
+// 敵キャラクターのインスタンス数
+const ENEMY_MAX_COUNT = 3;
+
+// 敵キャラクターのインスタンスを格納する配列
+let enemyArray = [];
 
 // ショットのインスタンスを格納する配列
 let shotArray = [];
@@ -134,15 +141,27 @@ const LoadImg = async () => {
 
     // 敵機
     const texture2 = await Assets.load('assets/images/pic_enemy_space_ship.png');
-    image2 = Sprite.from(texture2);
-    console.log(texture2);
-    console.log(image2);
-    image2.anchor.set(0.5);
-    image2.x = WIDTH / 2;
-    image2.y = HEIGHT / 2 - 90;
-    image2.scale.set(0.5, 0.5);
-    image2.rotation = 2;
-    container.addChild(image2);
+    for (let i = 0; i < + ENEMY_MAX_COUNT; i++) {
+        image_enemy[i] = Sprite.from(texture2);
+        console.log(texture2);
+        console.log(image_enemy[i]);
+        image_enemy[i].anchor.set(0.5);
+        image_enemy[i].x = WIDTH / 2;
+        image_enemy[i].y = HEIGHT / 2 - 30;
+        // image_shot_single[i].rotation = 2;
+        // container.addChild(image_shot_single[i]);
+        // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
+
+    }
+    // image2 = Sprite.from(texture2);
+    // console.log(texture2);
+    // console.log(image2);
+    // image2.anchor.set(0.5);
+    // image2.x = WIDTH / 2;
+    // image2.y = HEIGHT / 2 - 90;
+    // image2.scale.set(0.5, 0.5);
+    // image2.rotation = 2;
+    // container.addChild(image2);
 
     // 自分弾
     const texture3 = await Assets.load('assets/images/pic_tama_81x61_02.png');
@@ -225,13 +244,18 @@ const init = () => {
         shotArray_single[i * 2 + 1] = new Shot(container, 0, 0, 81, 61, 0, image_shot_single_left[i], 0.5, 0); // 生成でなくスプライトでやってるので別配列で
     }
 
-
     // ショットを自機キャラクターに設定する
     // viper.setShotArray(shotArray);
     viper.setShotArray(shotArray, shotArray_single); // 斜め用の弾を追加
 
     // （キー）イベントを設定する
     eventSetting();
+
+
+    // 敵キャラクターを作成する
+    for (let i = 0; i < ENEMY_MAX_COUNT; i++) {
+        enemyArray[i] = new Enemy(container, 340, 0, 69, 107, 1, image_enemy[i], 0.5, 0);
+    }
 
     // loading end flag
     loadingEnd = true;
@@ -319,8 +343,14 @@ app.ticker.add(() => {
         shotArray.map((v) => {
             v.update();
         });
+
         // 斜めのショット
         shotArray_single.map((v) => {
+            v.update();
+        });
+
+        // 敵の状態を更新する
+        enemyArray.map((v) => {
             v.update();
         });
 

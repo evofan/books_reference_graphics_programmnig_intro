@@ -77,6 +77,12 @@ export class Character {
 
         this.angle = 270 * Math.PI / 180;
 
+        this.position = new Position(x, y);
+        /**
+         * @type {Position}
+         */
+        this.vector = new Position(0.0, -1.0);
+
         //this.container.addChild(sprite); // 画面に追加 -> drawで
 
     }
@@ -97,6 +103,11 @@ export class Character {
         // 自身のvectorプロパティを設定する
         this.vector.set(cos, sin);
 
+    }
+
+    // 方向を設定する → characterクラスのsetVectorFromAngle()に移行
+    setVector(x, y) {
+        this.vector.set(x, y);
     }
 
     /**
@@ -299,6 +310,77 @@ export class Viper extends Character {
 
     }
 }
+
+
+/**
+ * 敵キャラクタークラス
+ */
+export class Enemy extends Character {
+
+    /**
+     * @constructor
+     * @param { PIXI.DisplayObject } container 
+     * @param { number } x 
+     * @param { number } y 
+     * @param { number } w 
+     * @param { number } h
+     * @param { PIXI.Sprite} sprite 
+     * @param {number} scale 縮尺
+     */
+    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
+
+        // 親クラスを呼び出す事で初期化する
+        super(container, x, y, w, h, life, sprite, scale, rotate);
+
+        this.speed = 3;
+
+    }
+
+    /**
+    * 敵を配置する
+    * @param {number} x 
+    * @param {number} y
+    * @param {number} life [=1] 
+    */
+    set(x, y, life = 1) {
+
+        // 配置時に移動
+        this.position.set(x, y);
+
+        // lifeを1以上に設定
+        this.life = life;
+
+    }
+
+    /**
+    * キャラクターを更新する
+    */
+    update() {
+
+        if (this.life <= 0) {
+            console.log("抜け");
+            return false;
+        }
+
+        // もし敵キャラクターが画面外（画面下）に移動していたらライフを0（非生存）の状態にする
+        if (this.position.y - this.height > 480/* this.container.height */) {
+            console.log("画面外に出たので非生存に");
+            this.life = 0;
+        }
+
+        // 進行方向に移動する
+        this.vector.y = 1; // 下方向
+        
+        this.position.x += this.vector.x * this.speed;
+        this.position.y += this.vector.y * this.speed;
+
+        // 敵キャラクターを描画する
+        this.draw();
+
+    }
+
+}
+
 
 /**
  * ショット（プレイヤーの弾）クラス
