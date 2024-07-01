@@ -75,7 +75,27 @@ export class Character {
         console.log(this.scale);
         this.rotate = rotate;
 
+        this.angle = 270 * Math.PI / 180;
+
         //this.container.addChild(sprite); // 画面に追加 -> drawで
+
+    }
+
+    /**
+     * 進行方向を角度を元に設定する
+     * @param { number } angle - 回転（ラジアン）
+     */
+    setVectorFromAngle(angle) {
+
+        // 自身の回転量を元に設定する
+        this.angle = angle;
+
+        // ラジアンからサインとコサインを求める
+        let sin = Math.sin(angle);
+        let cos = Math.cos(angle);
+
+        // 自身のvectorプロパティを設定する
+        this.vector.set(cos, sin);
 
     }
 
@@ -105,7 +125,6 @@ export class Character {
         // this.sprite.y = this.position.y - offsetY;
 
     }
-
 
 }
 
@@ -246,10 +265,20 @@ export class Viper extends Character {
                     if (this.shotArray_single[i].life <= 0 && this.shotArray_single[i + 1].life <= 0) {
 
                         // 自機キャラと同じバ場所にショットを生成する
+                        // this.shotArray_single[i].set(this.position.x, this.position.y);
+                        // this.shotArray_single[i].setVector(0.2, -0.9); // やや右に向かう
+                        // this.shotArray_single[i + 1].set(this.position.x, this.position.y);
+                        // this.shotArray_single[i + 1].setVector(-0.2, -0.9); // やや左に向かう
+
+                        // 真上の方向から左右10度ずつ開いたラジアン
+                        let radCW = 280 * Math.PI / 180; // 時計回りに10°
+                        let radCCW = 260 * Math.PI / 180; // 半時計周りに10°
+
+                        // 自機キャラと同じバ場所にショットを生成する
                         this.shotArray_single[i].set(this.position.x, this.position.y);
-                        this.shotArray_single[i].setVector(0.2, -0.9); // やや右に向かう
+                        this.shotArray_single[i].setVectorFromAngle(radCW); // やや右に向かう
                         this.shotArray_single[i + 1].set(this.position.x, this.position.y);
-                        this.shotArray_single[i + 1].setVector(-0.2, -0.9); // やや左に向かう
+                        this.shotArray_single[i + 1].setVectorFromAngle(radCCW); // やや左に向かう
 
                         // -10を設定（時間貯める用）
                         this.shotCheckCounter = -this.shotInterval;
@@ -303,10 +332,10 @@ export class Shot extends Character {
         this.life = 1;
     }
 
-    // 方向を設定する
-    setVector(x, y) {
-        this.vector.set(x, y);
-    }
+    // 方向を設定する → characterクラスのsetVectorFromAngle()に移行
+    // setVector(x, y) {
+    //     this.vector.set(x, y);
+    // }
 
     // 描画を更新する
     update() {
