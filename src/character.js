@@ -334,6 +334,17 @@ export class Enemy extends Character {
 
         this.speed = 3;
 
+        // 敵のタイプ
+        this.type = "default";
+
+        // 自身が出現してからのフレーム数、間隔調整用
+        this.frame = 0;
+
+        // 自身が持つショットインスタンスの配列
+        this.shotArray = null;
+
+        this.scale = scale;
+
     }
 
     /**
@@ -341,8 +352,9 @@ export class Enemy extends Character {
     * @param {number} x 
     * @param {number} y
     * @param {number} life [=1] 
+    * @param {string} type = ["default"]
     */
-    set(x, y, life = 1) {
+    set(x, y, life = 1, type = "default") {
 
         // 配置時に移動
         this.position.set(x, y);
@@ -350,6 +362,21 @@ export class Enemy extends Character {
         // lifeを1以上に設定
         this.life = life;
 
+        // typeを設定
+        this.type = type;
+
+        // 敵キャラクターのフレームをリセットする
+        this.frame = 0;
+
+    }
+
+    /**
+ * ショットを設定する
+ * @param {Array<Shot>} shotArray - 自身に設定するショットの配列
+ */
+    setShotArray(shotArray) {
+        // 自身のプロパティに設定する
+        this.shotArray = shotArray;
     }
 
     /**
@@ -363,19 +390,70 @@ export class Enemy extends Character {
         }
 
         // もし敵キャラクターが画面外（画面下）に移動していたらライフを0（非生存）の状態にする
-        if (this.position.y - this.height > 480/* this.container.height */) {
-            console.log("画面外に出たので非生存に");
-            this.life = 0;
-        }
+        // if (this.position.y - this.height > 480/* this.container.height */) {
+        //     console.log("画面外に出たので非生存に");
+        //     this.life = 0;
+        // }
 
         // 進行方向に移動する
-        this.vector.y = 1; // 下方向
-        
-        this.position.x += this.vector.x * this.speed;
-        this.position.y += this.vector.y * this.speed;
+        // this.vector.y = 1; // 下方向
+
+        // this.position.x += this.vector.x * this.speed;
+        // this.position.y += this.vector.y * this.speed;
+
+        // ■タイプ別院対応
+        switch (this.type) {
+
+            case "default":
+            // breakしてないので毎回今はdefaultになる
+            default:
+
+                // 配置後のフレームが50に達したら弾を撃つ
+                if (this.frame === 50) {
+                    this.fire();
+                }
+
+                // 進行方向にいどうする
+                this.position.x += this.vector.x * this.speed;
+                this.position.y += this.vector.y * this.speed;
+
+                if (this.position.y - this.height > 480/* this.container.height */) {
+                    console.log("画面外に出たので非生存に");
+                    this.life = 0;
+                }
+
+                break;
+
+        }
 
         // 敵キャラクターを描画する
         this.draw();
+
+        // 自分自身のフレームをインクリメントする
+        this.frame++;
+
+    }
+
+    /**
+     * 
+     * @param {*} x 
+     * @param {*} y 
+     */
+    fire(x = 0.0, y = 1.0) {
+
+        for (let i = 0; i < this.shotArray.length; i++) {
+
+            if (this.shotArray[i].life <= 0) {
+
+                this.shotArray[i].set(this.position.x - 51 / 2 + 7, this.position.y); // Shotクラスで対応してる筈？
+
+                this.shotArray[i].setSpeed(5.0);
+
+                this.shotArray[i].setVector(x, y);
+
+                break;
+            }
+        }
 
     }
 
@@ -442,5 +520,12 @@ export class Shot extends Character {
         this.draw();
     }
 
+    setSpeed(speed) {
+
+        if (speed != null && speed > 0) {
+            this.speed = speed;
+        }
+
+    }
 
 }

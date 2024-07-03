@@ -25,8 +25,9 @@ export class SceneManager {
      * @param { string } name
      * @param { function } updateFunction
      */
-    addScene(name, updateFunction) {
-        this[scene].name = updateFunction;
+    add(name, updateFunction) {
+        this.scene[name] = updateFunction;
+        console.log("add()", this.scene[name]);
     }
 
     /**
@@ -36,7 +37,9 @@ export class SceneManager {
      */
     use(name) {
 
+        // 指定されたシーンがあるか確認する
         if (this.scene.hasOwnProperty(name) !== true) {
+            // 無ければ抜ける
             return;
         }
 
@@ -57,14 +60,13 @@ export class SceneManager {
     update() {
 
         // シーンがアクティブになってからの経過時間
-        let activeTime = (Date.now() - this.startTime / 1000);
+        let activeTime = (Date.now() - this.startTime) / 1000;
 
         // 経過時間を引数に与えてupdateFunction()を呼び出す
         this.activeScene(activeTime);
 
         // シーンを更新したのでインクリメントする
         this.frame++;
-
     }
 
 

@@ -106,8 +106,11 @@ let viper;
 // 自機最大弾数
 const SHOT_MAX_COUNT = 5;
 
-// 敵キャラクターのインスタンス数
+// 敵キャラクターの最大４数
 const ENEMY_MAX_COUNT = 3;
+
+// 敵キャラクターの弾の最大数
+const ENEMY_SHOT_MAX_COUNT = 10;
 
 // 敵キャラクターのインスタンスを格納する配列
 let enemyArray = [];
@@ -116,6 +119,17 @@ let enemyArray = [];
 let shotArray = [];
 // ショット（シングル＝斜め用）のインスタンスを格納する配列
 let shotArray_single = [];
+
+// 敵弾スプライト
+let enemy_shot = [];
+
+// ショット（敵）のインスタンスを格納する配列
+let enemyShotArray = [];
+
+
+// シーンマネージャー
+let scene = null;
+
 
 // Load image and Set sprite
 const LoadImg = async () => {
@@ -208,6 +222,19 @@ const LoadImg = async () => {
 
     }
 
+    // 敵弾
+    const texture6 = await Assets.load('assets/images/pic_enemy_tama_51_61.png');
+    for (let i = 0; i < + ENEMY_SHOT_MAX_COUNT; i++) {
+        enemy_shot[i] = Sprite.from(texture6);
+        console.log(texture6);
+        console.log(enemy_shot[i]);
+        enemy_shot[i].anchor.set(0.5);
+        // enemy_shot[i].x = WIDTH / 2;
+        // enemy_shot[i].y = HEIGHT / 2 - 30;
+        // container.addChild(image_shot[i]); // 確認用
+        // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
+    }
+
     init(); // next actions
 }
 
@@ -253,10 +280,25 @@ const init = () => {
     // （キー）イベントを設定する
     eventSetting();
 
+    // シーンを初期化する
+    scene = new SceneManager();
+
+    // シーンを定義する
+    sceneSetting();
+
+
+    // 敵キャラクターのショットを初期化する
+    for (let i = 0; i < ENEMY_SHOT_MAX_COUNT; i++) {
+        enemyShotArray[i] = new Shot(container, 0, 0, 51, 61, 0, enemy_shot[i], 0.5, 0);
+    }
 
     // 敵キャラクターを作成する
     for (let i = 0; i < ENEMY_MAX_COUNT; i++) {
-        enemyArray[i] = new Enemy(container, 340, 0, 69, 107, 1, image_enemy[i], 0.5, 0);
+        enemyArray[i] = new Enemy(container, 340, 0, 69, 107, 0, image_enemy[i], 0.5, 0);
+        // life = 0で無いとこのタイミングで表示までされてしまうので注意
+
+        // 敵キャラクターは全て同じショットを共有するのでここで与えておく
+        enemyArray[i].setShotArray(enemyShotArray);
     }
 
     // loading end flag
@@ -287,6 +329,51 @@ function eventSetting() {
     }, false);
 
 }
+
+/**
+ * シーンを設定する
+ */
+function sceneSetting() {
+
+    // イントロシーン
+    scene.add("intro", (time) => {
+        if (time > 2.0) {
+            scene.use("invade");
+        }
+    });
+
+    // invadeシーン
+    scene.add("invade", (time) => {
+        // シーンのフレームが0以外の時は終了
+        // if (scene.frame !== 0) {
+        //     return;
+        // }
+
+        if (scene.frame === 0) {
+            // ライフが0のキャラクターが見つかったら配置する
+            for (let i = 0; i < ENEMY_MAX_COUNT; i++) {
+                if (enemyArray[i].life <= 0) {
+                    let e = enemyArray[i];
+                    // 出現場所
+                    e.set(640 / 2 + i * 10, -e.height, 1, "default"); // 中央
+                    // 進行方向は真下に向かうように設定アする
+                    e.setVector(0.0, 1.0);
+                    break;
+                }
+            }
+        }
+
+        if (scene.frame === 100) {
+            scene.use("invade");
+        }
+
+    });
+
+    // 最初のシーンにはintroを設定する
+    scene.use("intro");
+
+}
+
 
 // 以下自機クラスに移動
 // let mv = 10;
@@ -355,6 +442,14 @@ app.ticker.add(() => {
         enemyArray.map((v) => {
             v.update();
         });
+
+        // 敵キャラの状態を更新する
+        enemyShotArray.map((v) => {
+            v.update();
+        });
+
+        // シーンを更新する
+        scene.update();
 
     }
 
