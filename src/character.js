@@ -43,6 +43,19 @@ export class Position {
 
     }
 
+    /**
+     * 2点間（自分自身とtarget）の距離を計測する
+     * @param { Position } target - 距離を測る対象 
+     * @returns { number }
+     */
+    distance(target) {
+        let x = this.x - target.x;
+        let y = this.y - target.y;
+
+        return Math.sqrt(x * x + y * y);
+
+    }
+
 }
 
 /**
