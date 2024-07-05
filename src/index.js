@@ -107,7 +107,7 @@ let viper;
 const SHOT_MAX_COUNT = 5;
 
 // 敵キャラクターの最大４数
-const ENEMY_MAX_COUNT = 3;
+const ENEMY_MAX_COUNT = 1;
 
 // 敵キャラクターの弾の最大数
 const ENEMY_SHOT_MAX_COUNT = 10;
@@ -257,7 +257,7 @@ const init = () => {
 
     let startX = WIDTH / 2; // + (image1.width / 2) * 0.5;; // 自機のoffset分はクラス側で考慮
     let startY = HEIGHT - (image1.height / 2) * 0.5; // 画面下に配置
-    viper = new Viper(container, startX, startY, image1.width, image1.height, 0, image1, 0.5, 0);
+    viper = new Viper(container, startX, startY, image1.width, image1.height, 1, image1, 0.5, 0);
     viper.draw(); // ok
 
     // viper.setComing();
@@ -299,6 +299,13 @@ const init = () => {
 
         // 敵キャラクターは全て同じショットを共有するのでここで与えておく
         enemyArray[i].setShotArray(enemyShotArray);
+    }
+
+    // 衝突判定を行うために対象を設定する
+    for (let i = 0; i < SHOT_MAX_COUNT; ++i) {
+        shotArray[i].setTargets(enemyArray);
+        shotArray_single[i * 2].setTargets(enemyArray);
+        shotArray_single[i * 2 + 1].setTargets(enemyArray);
     }
 
     // loading end flag
@@ -355,7 +362,8 @@ function sceneSetting() {
                 if (enemyArray[i].life <= 0) {
                     let e = enemyArray[i];
                     // 出現場所
-                    e.set(640 / 2 + i * 10, -e.height, 1, "default"); // 中央
+                    // e.set(640 / 2 + i * 10, -e.height, 1, "default"); // 中央
+                    e.set(640 / 2 + i * 10, -e.height, 2, "default"); // 中央
                     // 進行方向は真下に向かうように設定アする
                     e.setVector(0.0, 1.0);
                     break;

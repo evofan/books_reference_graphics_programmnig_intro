@@ -128,6 +128,11 @@ export class Character {
      */
     draw() {
 
+        // if (this.life <= 0) {
+        //     this.container.removeChild(this.sprite);
+        //     return false;
+        // }
+
         let offsetX = this.width / 2 * this.scale; // 縮尺も考慮
         let offsetY = this.height / 2 * this.scale;
         // console.log(offsetX, offsetY);//60,120 → 30,60
@@ -147,6 +152,11 @@ export class Character {
 
         // this.sprite.x = this.position.x - offsetX;
         // this.sprite.y = this.position.y - offsetY;
+
+        // 自分の弾はこれで消える
+        if (this.life <= 0) {
+            this.sprite.y += 1000;
+        }
 
     }
 
@@ -273,6 +283,9 @@ export class Viper extends Character {
                         // 自機キャラと同じバ場所にショットを生成する
                         this.shotArray[i].set(this.position.x, this.position.y);
 
+                        // 中央のショットは攻撃力を 2 にする
+                        this.shotArray[i].setPower(2);
+
                         // -10を設定（時間貯める用）
                         this.shotCheckCounter = -this.shotInterval;
 
@@ -358,6 +371,9 @@ export class Enemy extends Character {
 
         this.scale = scale;
 
+        this.container = container;
+        this.sprite = sprite;
+
     }
 
     /**
@@ -367,7 +383,7 @@ export class Enemy extends Character {
     * @param {number} life [=1] 
     * @param {string} type = ["default"]
     */
-    set(x, y, life = 1, type = "default") {
+    set(x, y, life = 0, type = "default") {
 
         // 配置時に移動
         this.position.set(x, y);
@@ -384,9 +400,9 @@ export class Enemy extends Character {
     }
 
     /**
- * ショットを設定する
- * @param {Array<Shot>} shotArray - 自身に設定するショットの配列
- */
+    * ショットを設定する
+    * @param {Array<Shot>} shotArray - 自身に設定するショットの配列
+    */
     setShotArray(shotArray) {
         // 自身のプロパティに設定する
         this.shotArray = shotArray;
@@ -483,6 +499,9 @@ export class Shot extends Character {
         // 親クラスのコンストラクターを呼び出し
         super(container, x, y, w, h, life, sprite, scale, rotate);
 
+        this.container = container;
+        this.sprite = sprite;
+
         // 弾の速さ
         this.speed = 7;
 
@@ -494,6 +513,15 @@ export class Shot extends Character {
 
         // 弾の方向（x+-, y+-）
         this.vector = new Position(0.0, -1.0); // -1は上方向
+
+        // ■ 衝突判定用
+
+        // 攻撃力
+        this.power = 1;
+
+        // 衝突判定を行う対象のオブジェクトを保持する配列
+        // @type = Array<character>
+        this.targetArray = [];
 
     }
 
@@ -529,6 +557,45 @@ export class Shot extends Character {
         this.position.x += this.vector.x * this.speed;
         this.position.y += this.vector.y * this.speed;
 
+        // ショットと対象との衝突判定を行う
+        this.targetArray.map((v) => {
+
+            // 自信か対象のライフが0の場合は飛ばす
+            if (this.life <= 0 || v.life <= 0) {
+                return false;
+            }
+
+            // ★自身との対象との距離を測る
+            let dist = this.position.distance(v.position);
+
+            // 自身と対象との距離が1/4までになったら衝突とみなす
+            if (dist <= (this.width + v.width) / 4) {
+
+                console.log("■ 衝突！");
+                console.log("v", v);
+                // v.width = 100;
+                // v.alpha = 0.5;
+                // v.sprite.alpha = 0.5;
+                v.sprite.y = 1000; // 敵はこれで消える
+
+                // 対象のライフから攻撃力分を減らす
+                v.life -= this.power;
+                // if(v.life<=0){
+                //     v.position.y = 1000;
+                // }
+                // v.alpha = 0;
+
+                // 自分をライフを0にする（消滅する）
+                this.life = 0;
+                // this.sprite.y = 1000;
+                // this.alpha = 0;
+
+                // this.container.removeChild(this.sprite);
+
+            }
+
+        });
+
         // 描画する
         this.draw();
     }
@@ -539,6 +606,27 @@ export class Shot extends Character {
             this.speed = speed;
         }
 
+    }
+
+    /**
+     * ショットの攻撃力を設定する
+     * @param { number } power - 攻撃力
+     */
+    setPower(power) {
+
+        if (power != null && power > 0) {
+            this.power = power;
+        }
+    }
+
+    /**
+     * ショットの衝突判定の対象を設定する
+     */
+    setTargets(targets) {
+        // 配列であるか判定
+        if (targets != null && Array.isArray(targets) === true && targets.length > 0) {
+            this.targetArray = targets;
+        }
     }
 
 }
