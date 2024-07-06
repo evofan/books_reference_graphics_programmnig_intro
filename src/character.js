@@ -353,7 +353,7 @@ export class Enemy extends Character {
      * @param { PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
+    constructor(container, x, y, w, h, life, sprite, scale, rotate, enemyExplosion) {
 
         // 親クラスを呼び出す事で初期化する
         super(container, x, y, w, h, life, sprite, scale, rotate);
@@ -373,6 +373,8 @@ export class Enemy extends Character {
 
         this.container = container;
         this.sprite = sprite;
+
+        this.enemyExplosion = enemyExplosion;
 
     }
 
@@ -406,6 +408,29 @@ export class Enemy extends Character {
     setShotArray(shotArray) {
         // 自身のプロパティに設定する
         this.shotArray = shotArray;
+    }
+
+    setExplostion(x, y) {
+        console.log("爆発表示！", x, y);
+
+        this.enemyExplosion.life = 1;
+        this.enemyExplosion.sprite.alpha = 1;
+
+        this.enemyExplosion.position.x = x + 30;
+        this.enemyExplosion.position.y = y + 30;
+
+        const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));//timeはミリ秒
+
+        async function eraseExplosion(e) {
+            console.log("e:", e);
+            await sleep(200);
+            e.sprite.alpha = 0;
+
+            console.log("e2:", e);
+        }
+        eraseExplosion(this.enemyExplosion);
+
+        console.log("爆発表示終了！", x, y);
     }
 
     /**
@@ -565,6 +590,8 @@ export class Shot extends Character {
                 return false;
             }
 
+
+
             // ★自身との対象との距離を測る
             let dist = this.position.distance(v.position);
 
@@ -576,7 +603,6 @@ export class Shot extends Character {
                 // v.width = 100;
                 // v.alpha = 0.5;
                 // v.sprite.alpha = 0.5;
-                v.sprite.y = 1000; // 敵はこれで消える
 
                 // 対象のライフから攻撃力分を減らす
                 v.life -= this.power;
@@ -585,12 +611,16 @@ export class Shot extends Character {
                 // }
                 // v.alpha = 0;
 
+                v.setExplostion(v.sprite.x, v.sprite.y);
+
                 // 自分をライフを0にする（消滅する）
                 this.life = 0;
                 // this.sprite.y = 1000;
                 // this.alpha = 0;
 
                 // this.container.removeChild(this.sprite);
+
+                v.sprite.y = 1000; // 敵はこれで消える
 
             }
 
@@ -627,6 +657,54 @@ export class Shot extends Character {
         if (targets != null && Array.isArray(targets) === true && targets.length > 0) {
             this.targetArray = targets;
         }
+    }
+
+    /**
+ * ショットが爆発エフェクトを発生できるよう設定する
+ * @param {Array<Explosion>} [targets] - 爆発エフェクトを含む配列
+ */
+
+    // setExplosions(targets) {
+    // 引数の状態を確認して有効な場合は設定する
+    //     if (targets != null && Array.isArray(targets) === true && targets.length > 0) {
+    //         this.explosionArray = targets;
+    //     }
+    // }
+
+
+}
+
+
+
+/**
+ * 敵爆発エフェクトクラス
+ */
+export class Explosion extends Character {
+
+    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
+
+        // 親クラスのコンストラクターを呼び出し
+        super(container, x, y, w, h, life, sprite, scale, rotate);
+
+        this.container = container;
+        this.sprite = sprite;
+
+        this.w = w;
+        this.h = h;
+
+    }
+
+    // 描画を更新する
+    update() {
+
+        // lifeが0以下なら抜け
+        if (this.life <= 0) {
+            return false;
+        }
+
+        // 描画する
+        this.draw();
+
     }
 
 }

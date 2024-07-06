@@ -8,7 +8,7 @@ import { randomInt } from "./helper/randomInt";
 import { STAGES } from "./constants";
 import { displayDateText } from "./helper/text";
 
-import { Character, EnemyTemp, Viper, CharacterTemp, Shot, Enemy } from "./character.js";
+import { Character, EnemyTemp, Viper, CharacterTemp, Shot, Enemy, Explosion } from "./character.js";
 
 import { SceneManager } from "./scene.js";
 
@@ -126,6 +126,26 @@ let enemy_shot = [];
 // ショット（敵）のインスタンスを格納する配列
 let enemyShotArray = [];
 
+// 敵爆発エフェクトの数
+const ENEMY_EXPLOSION_MAX_COUNT = 3;
+// 敵爆発エフェクトスプライト
+let enemy_explosion = [];
+// 敵爆発エフェクト格納用
+let enemyExplosionArray = [];
+
+
+/**
+ * 爆発エフェクトの最大個数
+ * @type {number}
+ */
+// const EXPLOSION_MAX_COUNT = 10;
+
+/**
+ * 爆発エフェクトのインスタンスを格納する配列
+ * @type {Array<Explosion>}
+ */
+// let explosionArray = [];
+
 
 // シーンマネージャー
 let scene = null;
@@ -235,6 +255,19 @@ const LoadImg = async () => {
         // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
     }
 
+    // 爆発エフェクト
+    const texture7 = await Assets.load('assets/images/25341713_60x61.png');
+    for (let i = 0; i < + ENEMY_EXPLOSION_MAX_COUNT; i++) {
+        enemy_explosion[i] = Sprite.from(texture7);
+        console.log(texture7);
+        console.log(enemy_explosion[i]);
+        enemy_explosion[i].anchor.set(0.5);
+        // enemy_shot[i].x = WIDTH / 2;
+        // enemy_shot[i].y = HEIGHT / 2 - 30;
+        // container.addChild(image_shot[i]); // 確認用
+        // image_shot[i].scale.set(0.5, 0.5); // Shotインスタンス作成側で（オフセット計算にも使うので）
+    }
+
     init(); // next actions
 }
 
@@ -292,9 +325,16 @@ const init = () => {
         enemyShotArray[i] = new Shot(container, 0, 0, 51, 61, 0, enemy_shot[i], 0.5, 0);
     }
 
+    // 敵爆発エフェクトを生成する
+    for (let i = 0; i < ENEMY_EXPLOSION_MAX_COUNT; i++) {
+        enemyExplosionArray[i] = new Explosion(container, 200, 200, 60, 61, 0, enemy_explosion[i], 1, 0);
+        // life = 0で無いとこのタイミングで表示までされてしまうので注意
+
+    }
+
     // 敵キャラクターを作成する
     for (let i = 0; i < ENEMY_MAX_COUNT; i++) {
-        enemyArray[i] = new Enemy(container, 340, 0, 69, 107, 0, image_enemy[i], 0.5, 0);
+        enemyArray[i] = new Enemy(container, 340, 0, 69, 107, 0, image_enemy[i], 0.5, 0, enemyExplosionArray[i]);
         // life = 0で無いとこのタイミングで表示までされてしまうので注意
 
         // 敵キャラクターは全て同じショットを共有するのでここで与えておく
@@ -306,7 +346,19 @@ const init = () => {
         shotArray[i].setTargets(enemyArray);
         shotArray_single[i * 2].setTargets(enemyArray);
         shotArray_single[i * 2 + 1].setTargets(enemyArray);
+
+        // org
+        // shotArray[i].setExplosions(explosionArray);
+        // shotArray_single[i * 2].setExplosions(explosionArray);
+        // shotArray_single[i * 2 + 1].setExplosions(explosionArray);
     }
+
+
+
+    // 爆発エフェクトを初期化する
+    // for (let i = 0; i < EXPLOSION_MAX_COUNT; ++i) {
+    //     explosionArray[i] = new Explosion(container, 50.0, 15, 30.0, 0.25);
+    // }
 
     // loading end flag
     loadingEnd = true;
@@ -455,6 +507,23 @@ app.ticker.add(() => {
         enemyShotArray.map((v) => {
             v.update();
         });
+
+        // // 爆発エフェクトの状態を更新する
+        // explosionArray.map((v) => {
+        //     v.update();
+        // });
+
+       // 敵爆発エフェクトの状態を更新する
+        enemyExplosionArray.map((v) => {
+            v.update();
+        });
+
+        // 爆発エフェクト表示
+        // for (let i = 0; i < ENEMY_MAX_COUNT; i++) {
+        //     if(enemyArray[i].life <=0){
+        //         console.log("爆発表示！");
+        //     }
+        // }
 
         // シーンを更新する
         scene.update();
