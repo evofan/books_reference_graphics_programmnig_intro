@@ -178,7 +178,7 @@ export class Viper extends Character {
      * @param { PIXI.Sprite} sprite 
      * @param {number} scale 縮尺
      */
-    constructor(container, x, y, w, h, life, sprite, scale, rotate) {
+    constructor(container, x, y, w, h, life, sprite, scale, rotate, myExplosion) {
 
         // 親クラスを呼び出す事で初期化する
         super(container, x, y, w, h, life, sprite, scale, rotate);
@@ -207,6 +207,12 @@ export class Viper extends Character {
         this.shotCheckCounter = 0;
         this.shotInterval = 10;
 
+        this.life = 1;
+
+        this.myExplosion = myExplosion;
+        console.log("this.myExplosion:", this.myExplosion); // 
+
+        this.myExplosion.position.x = 400;
     }
 
     /**
@@ -229,9 +235,49 @@ export class Viper extends Character {
     }
 
     /**
+    * 爆発処理（orgと違ってViperキャラクラス内で行う）
+    * @param {} x 
+    * @param {*} y 
+    */
+    setExplostion(x, y) {
+        // console.log("自分爆発表示！", x, y);
+
+        // this.myExplosion.life = 1;
+        // this.myExplosion.sprite.alpha = 1;
+
+        // this.myExplosion.position.x = x + 30;
+        // this.myExplosion.position.y = y + 30;
+
+
+        // this.myExplosion.position.x = 300;
+        // this.myExplosion.position.y = 300;
+
+        //     console.log("自分爆発表示！", x, y);
+
+
+        //     const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));//timeはミリ秒
+
+        //     async function eraseExplosion(e) {
+        //         console.log("e:", e);
+        //         await sleep(200);
+        //         // e.sprite.alpha = 0;
+
+        //         console.log("e2:", e);
+        //     }
+        //     eraseExplosion(this.myExplosion);
+
+        //     console.log("自分爆発表示終了！", x, y);
+        // }
+    }
+
+    /**
      * キャラクターを更新する
      */
     update() {
+
+        if(this.life<=0){
+            return false;
+        }
 
         // console.log("update()");
 
@@ -410,6 +456,11 @@ export class Enemy extends Character {
         this.shotArray = shotArray;
     }
 
+    /**
+     * 爆発処理（orgと違って敵キャラクラス内で行う）
+     * @param {} x 
+     * @param {*} y 
+     */
     setExplostion(x, y) {
         console.log("爆発表示！", x, y);
 
@@ -576,6 +627,8 @@ export class Shot extends Character {
             this.life = 0;
         }
 
+
+
         // 弾を上に移動する
         // this.position.y -= this.speed;
         // ↓進行方向の概念を追加
@@ -590,13 +643,15 @@ export class Shot extends Character {
                 return false;
             }
 
-
-
             // ★自身との対象との距離を測る
             let dist = this.position.distance(v.position);
 
             // 自身と対象との距離が1/4までになったら衝突とみなす
             if (dist <= (this.width + v.width) / 4) {
+
+                if (v instanceof Viper) {
+                    // 登場演出時あれば無効にする（今回は略）
+                }
 
                 console.log("■ 衝突！");
                 console.log("v", v);
