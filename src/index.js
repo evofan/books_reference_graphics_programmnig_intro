@@ -155,6 +155,9 @@ let enemyExplosionArray = [];
 // シーンマネージャー
 let scene = null;
 
+// リスタートフラグ
+let restart = false;
+
 
 // Load image and Set sprite
 const LoadImg = async () => {
@@ -404,6 +407,25 @@ const init = () => {
     // loading end flag
     loadingEnd = true;
 
+    // リスタート用処理
+    window.addEventListener("keydown", (event) => {
+
+        isKeyDown[`key_${event.key}`] = true;
+
+        if (event.key === "Enter") {
+            if (viper.life <= 0) {
+                restart = true;
+            }
+        }
+
+    }, false);
+
+    window.addEventListener("keyup", (event) => {
+
+        isKeyDown[`key_${event.key}`] = false;
+
+    }, false);
+
 }
 
 let startTime = null;
@@ -467,6 +489,27 @@ function sceneSetting() {
         if (scene.frame === 100) {
             scene.use("invade");
         }
+
+        if (viper.life <= 0) {
+            scene.use('gameover');
+        }
+
+        // GameOverシーン
+        scene.add("gameover", (time) => {
+
+            // temp
+            alert("GameOver");
+
+            if (restart) {
+
+                restart = false;
+
+                // intorは略
+                scene.use("invade");
+
+            }
+
+        });
 
     });
 
