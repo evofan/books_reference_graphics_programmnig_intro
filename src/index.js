@@ -76,6 +76,21 @@ text2.x = WIDTH - 30;
 // text2.y = HEIGHT / 2 - 10;
 text2.y = HEIGHT - 10;
 
+
+
+let temp3 = `Game Over`;
+let text3 = new PIXI.Text(temp3, {
+    fontSize: 30,
+    fill: 0xfefefe,
+    lineJoin: "round"
+});
+container.addChild(text3);
+text3.anchor.set(0.5);
+text3.x = WIDTH / 2; // - text3.width; アンカーを0.5にしたので自分の幅を引かなくてOK
+text3.y = HEIGHT / 2; // - text3.height;
+text3.alpha = 0.0;
+
+
 let texture1;
 let image1;
 let image2;
@@ -301,6 +316,9 @@ LoadImg();
 let dice = randomInt(1, 6);
 console.log("dice no: ", dice); // 1-6
 
+let startX;
+let startY;
+
 // 初期化
 const init = () => {
     console.log("init()");
@@ -326,8 +344,8 @@ const init = () => {
     // 自機ヴァイパーを作成する
     console.log(image1.width, image1.height);//120,240
 
-    let startX = WIDTH / 2; // + (image1.width / 2) * 0.5;; // 自機のoffset分はクラス側で考慮
-    let startY = HEIGHT - (image1.height / 2) * 0.5; // 画面下に配置
+    startX = WIDTH / 2; // + (image1.width / 2) * 0.5;; // 自機のoffset分はクラス側で考慮
+    startY = HEIGHT - (image1.height / 2) * 0.5; // 画面下に配置
     viper = new Viper(container, startX, startY, image1.width, image1.height, 1, image1, 0.5, 0, myExplosionArray[0]); // 敵爆発を応用
     viper.draw(); // ok
 
@@ -498,14 +516,24 @@ function sceneSetting() {
         scene.add("gameover", (time) => {
 
             // temp
-            alert("GameOver");
+            // alert("GameOver");
 
-            if (restart) {
+            // Game Over表示
+            text3.alpha = 1.0;
+
+            if (restart === true) {
 
                 restart = false;
 
+                // Game Over表示
+                text3.alpha = 0.0;
+
+                viper.life = 1;
+                viper.position.x = startX;
+                viper.position.y = startY;
+
                 // intorは略
-                scene.use("invade");
+                scene.use("intro");
 
             }
 
