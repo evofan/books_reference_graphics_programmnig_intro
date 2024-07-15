@@ -275,7 +275,7 @@ export class Viper extends Character {
      */
     update() {
 
-        if(this.life<=0){
+        if (this.life <= 0) {
             return false;
         }
 
@@ -658,6 +658,11 @@ export class Shot extends Character {
                 // v.width = 100;
                 // v.alpha = 0.5;
                 // v.sprite.alpha = 0.5;
+
+                if (v instanceof Enemy === true) {
+                    console.log("★敵をやっつけた！");
+                    gameScore += 10;
+                }
 
                 // 対象のライフから攻撃力分を減らす
                 v.life -= this.power;

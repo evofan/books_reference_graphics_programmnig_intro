@@ -90,6 +90,33 @@ text3.x = WIDTH / 2; // - text3.width; アンカーを0.5にしたので自分�
 text3.y = HEIGHT / 2; // - text3.height;
 text3.alpha = 0.0;
 
+// ゲームスコア
+window.gameScore = 0;
+let temp4;
+let text4;
+function addScore() {
+
+    if (text4 != undefined) {
+        container.removeChild(text4);
+    }
+
+    temp4 = `Score ${gameScore}`;
+    text4 = new PIXI.Text(temp4, {
+        fontSize: 30,
+        fill: 0xfefefe,
+        lineJoin: "round"
+    });
+
+    container.addChild(text4);
+    text4.anchor.set(0.5);
+    text4.x = WIDTH - text4.width;
+    text4.y = text4.height;
+    text4.alpha = 1.0;
+
+}
+addScore();
+
+
 
 let texture1;
 let image1;
@@ -172,6 +199,8 @@ let scene = null;
 
 // リスタートフラグ
 let restart = false;
+
+
 
 
 // Load image and Set sprite
@@ -525,6 +554,9 @@ function sceneSetting() {
 
                 restart = false;
 
+                // 
+                window.gameScore = 0;
+
                 // Game Over表示
                 text3.alpha = 0.0;
 
@@ -667,6 +699,8 @@ app.ticker.add(() => {
 
         // シーンを更新する
         scene.update();
+
+        addScore();
 
     }
 
