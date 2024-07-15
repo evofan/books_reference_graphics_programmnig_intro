@@ -3,7 +3,7 @@
 DEMO  
 [https://evofan.github.io/books_reference_graphics_programmnig_intro/dist/](https://evofan.github.io/books_reference_graphics_programmnig_intro/dist/)  
 
-<img src="https://evofan.github.io/books_reference_graphics_programmnig_intro/screenshot/pic_sc_vetcor_shot.jpg" width="50%">  
+<img src="https://evofan.github.io/books_reference_graphics_programmnig_intro/screenshot/pic_sc_0715.jpg" width="50%">  
 
 reference  
 
